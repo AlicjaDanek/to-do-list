@@ -1,3 +1,4 @@
+const toDoList = [];
 const form = document.querySelector("form");
 const input1 = document.querySelector("input.addTask");
 const input2 = document.querySelector("input.dot");
@@ -7,7 +8,9 @@ const list = document.getElementsByClassName("task");
 
 
 const removeTask = (e) => {
-    e.target.parentNode.remove();
+    const index = e.target.parentNode.dataset.key;
+    toDoList.splice(index, 1);
+    renderList();
     taskNumber.textContent = list.length;
 
 
@@ -19,27 +22,31 @@ const addTask = (e) => {
     if (taskName === "") return;
     const li = document.createElement("li");
     li.innerHTML = taskName + "<button>remove</button>";
-    li.className = "task";
+     li.className = "task";
+    toDoList.push(li);
+    renderList();
+    
+    
+   
     ul.appendChild(li);
     input1.value = "";
     taskNumber.textContent = list.length;
-    li.querySelector("button").addEventListener("click", removeTask);
     input2.addEventListener("input", (e) => {
-        let things = [...list];
-        let searchText = e.target.value.toLowerCase();
+        let things = toDoList;
+        const searchText = e.target.value.toLowerCase();
         things = things.filter(item => item.textContent.toLowerCase().includes(searchText));
         ul.textContent = "";
         things.forEach(item => ul.appendChild(item))
         taskNumber.textContent = list.length;
-        if (input2.value === "") {
-            for (let thing of things) {
-                ul.appendChild(li);
-            }
-            taskNumber.textContent = list.length;
-        }
     })
-
+ li.querySelector("button").addEventListener("click", removeTask);
 
 }
+const renderList = ()=>{
+    ul.textContent = '';
+    toDoList.forEach((toDoElement, key)=>{
+        toDoElement.dataset.key = key;
+        ul.appendChild(toDoElement);
+    })}
 
 form.addEventListener("submit", addTask);
